@@ -1,0 +1,86 @@
+{% extends "base.html.twig" %}
+
+{% block body %}
+<header class="main-header">
+    {# <div id="main-title" class="my-2">
+        <div class="display-3 d-flex align-items-center">
+            <a href="{{ path('app_core_index') }}" style="margin-left:10%;">
+                <div class="bg-primary p-2 text-white me-3">
+                <i class="fas fa-cat"></i>
+            </div>
+            </a>
+
+            <div>
+                MeowMeow
+                <div class="fs-5">Pour les passionnés des chats</div>
+            </div>
+        </div> #}
+        <div class="navbar navbar-light bg-primary navbar-expand-lg d-flex justify-content-between align-items-center position-fixed top-0 w-100" style="color:white">
+        <div class="d-flex justify-content-center align-items-center">
+        
+             <a href="{{ path('app_core_index') }}" style="margin-left:10%;">
+                
+                <i class="fas fa-cat" style="font-size:2em;color:white;"></i>
+            
+            </a>
+            <h1 class="mx-3 my-auto">MeowMeow</h1>
+        </div>
+        
+            <div class=" d-flex justify-content-center align-items-center">
+            {% if app.user %}
+                {{ knp_menu_render('main') }}
+            {% else %}
+                Connectez vous pour accédez à la liste des chats
+            {% endif %}
+                <div class="nav-item dropdown ">
+                    <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                     <i class="fas fa-user" style="font-size:2em;color:white;"></i>
+                    </a>
+                    <div class="dropdown-menu dropdown-menu-end bg-primary">
+                        <div class="dropdown-item">{{ knp_menu_render('user') }}</div>
+                    </div>
+                </div>
+                
+            </div>
+        </div>
+    {# </div> #}
+</header>
+
+
+    
+        
+ <main>
+
+    {% block content %}
+    
+    {% endblock %}
+   
+    <div class="container position-fixed top-50 left-0">
+        <div class="flash-message">
+            {% for type, messages in app.flashes %}
+                {% for message in messages %}
+                    <div class="toast bg-{{ type }} show" role="alert" aria-live="assertive" aria-atomic="true">
+                        <div class="toast-header">
+                            <strong class="me-auto">{{ type }}</strong>
+                            <button class="btn-close" type="button" data-bs-dismiss="toast" aria-label="Close"></button>
+                        </div>
+                        <div class="toast-body">
+                            {{ message }}
+                        </div>
+                    </div>
+                {% endfor %}
+            {% endfor %}
+        </div>
+    </div>
+</main>
+
+<footer class="bg-dark" style=" margin-top:2%;position:fixed;bottom:0px;width:100%;color:white;font-size:0.5em;color:black;">
+<div class="d-flex justify-content-between align-items-center" style="width:80%; margin: auto;">
+    <span style="color:white">©MeowMeow</span>
+    <span><a style="color:white" href="https://www.linkedin.com/in/lo%C3%AFc-jaegle-b28157221/?originalSubdomain=fr"> JAEGLE Loïc</a></span>
+    <span><a style="color:white" href="https://www.linkedin.com/in/vaubourg-killian/?originalSubdomain=fr"> VAUBOURG Killian</a></span>
+    <span style="color:white"> Date de création: Novembre 2021</span>
+    <a style="color:white" href="mailto:vaubourg.killian@gmail.com"> Contactez-nous</a>
+</div>
+</footer>
+{% endblock %}

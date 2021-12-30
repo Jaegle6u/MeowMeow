@@ -1,0 +1,37 @@
+{% extends "front_layout.html.twig" %}
+
+{% block content %}
+<div class="container vh-100 vw-100 d-flex justify-content-center align-items-center">
+    <div class="row w-100">
+        <div class="col">
+            <nav class="navbar navbar-light bg-light">
+        <div class="container-fluid">
+          <span class="navbar-brand mb-0 h1">Article</span>
+           {% if is_granted('ROLE_ADMIN') %}
+            <a href="{{ path('app_article_new') }}" class="btn btn-success">Nouveau</a>
+            {% endif %}
+        </div>
+      </nav>
+     
+     
+      <ul class="list-group">
+      
+        {% for article in articles %}
+           <a href="{{ path('app_article_detail', {'id': article.id}) }}" class="list-group-item list-group-item-action d-flex justify-content-between align-items-start">
+              <div class="ms-2 me-auto">
+                <div class="fw-bold">{{ article.objet }}</div>
+                de {{ article.auteur.email }}
+              </div>
+              <span class="badge bg-primary rounded-pill">{{ article.date_ToString() }}</span>
+              
+          </a>
+        {% endfor %}
+        </ul>
+        <div class="container d-flex justify-content-center mt-3">
+            {% include "decorator/_pagination.html.twig" with {"route": "article"} %}
+        </div>
+        
+        </div>
+    </div>
+</div>
+{% endblock %}

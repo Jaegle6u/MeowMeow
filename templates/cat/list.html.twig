@@ -1,0 +1,192 @@
+{% extends "front_layout.html.twig" %}
+
+{% block content %}
+
+<div class="d-flex w-100 justify-content-between align-items-center" style="margin-top:6%; margin-bottom: -3%">
+    <div>Chats publiés: <div  class="badge bg-primary">{{ entities_enabled|length }}</div></div>
+    {% if is_granted('ROLE_ADMIN') %}
+        <div>Chat non-publié: <div  class="badge bg-warning">{{ entities|length - entities_enabled|length }}</div></div>
+        <div>Total Chat: <div  class="badge bg-primary">{{ entities|length }}</div></div>
+    {% endif %}
+    {% if app.user %}
+        <a href="{{ path('app_cat_new') }}" class="btn btn-success">{{ 'cat.new'|trans }}</a>
+    {% endif %}
+    
+</div>
+<section class="justify-content-between">
+
+{# ****************************ADMIN***************************************** #}
+{% if is_granted('ROLE_ADMIN') %}
+<h1>Interface Administrateur</h1>
+<p>Les chat en jaune sont non-publié</p>
+<div class="btn-group my-3" role="group" aria-label="Basic example">
+  <button type="button" class="btn btn-dark" id="btn_tout">Tout</button>
+  <button type="button" class="btn btn-success" id="btn_publie">Publié</button>
+  <button type="button" class="btn btn-warning" id="btn_non_publie">Non-Publié</button>
+</div>
+<ul class="list-group w-100">
+    {% for entity in entities %}
+        {% if entity.publish %}
+            <li class="list-group-item list_admin" data-publish=1>
+        {% else %}
+            <li class="list-group-item bg-warning list_admin" data-publish=0>
+        {% endif %}
+            <div class="d-flex w-100 justify-content-between align-items-center">
+            {% if entity.image is not empty %}
+                <img src="{{ asset(entity.image.webPath) }}" alt="{{ entity.name }}" style="max-width: 150px;">
+            {% endif %}
+            <h5>{{ entity.name }}</h5>
+            {% if entity.user is not empty %}
+                <div>{{ entity.user.username }}</div>
+            {% endif %}
+            <span class="badge bg-primary">{{ entity.breed}}</span>
+            <div>
+                <a href="{{ path('app_cat_like', {'id': entity.id }) }}" class="btn position-relative">
+                    <i class="fas fa-thumbs-up"></i>
+                    <span class="position-absolute top-100 start-0 translate-middle badge rounded-pill bg-primary">
+                        {{ entity.likes|length }}
+                    </span>
+                </a>
+                    <a href="{{ path('app_cat_detail', {'id': entity.id}) }}" class="btn btn-light"><i class="fas fa-search button_edit" ></i></a>
+                {% if is_granted('EDIT', entity) %}
+                    <a href="{{ path('app_cat_edit', {'id': entity.id} )}}" class="btn btn-light"><i class="fas fa-edit"></i></a>
+                    <a href="{{ path('app_cat_delete', {'id': entity.id} )}}" class="btn btn-danger"><i class="fas fa-trash"></i></a>
+                {% endif %}
+            </div>
+            </div>
+        </li>
+    {% endfor %}
+</ul>
+<div class="my-3">
+    {% include "decorator/_pagination.html.twig" with {"route": "app_cat_list"} %}
+</div>
+
+{# ************************************USER*********************************** #}
+{% else %}
+
+
+<div id="carouselExampleControls" class="carousel slide w-50 h-50" data-bs-touch="false" data-bs-interval="false">
+  <div class="carousel-inner d-flex justify-content-right">
+
+    <div class="carousel-item active">
+        <div class="c-subscribe-box">
+            <div class="rainbow"><span></span><span></span></div>
+                <div class="c-subscribe-box__wrapper d-flex justify-content-center align-items-center text-center"  style="max-width:300px; border-radius:8px;">Clickez sur les fleches pour faire défiler les chats</div>
+            </div>
+    </div>
+
+  {% for entity in entities %}
+    {% if entity.publish %}
+    <div class="carousel-item w-100">
+
+            <div class="c-subscribe-box">
+                <div class="rainbow"><span></span><span></span></div>
+                <img src="{{ asset(entity.image.webPath) }}" alt="{{ entity.name }}"class="c-subscribe-box__wrapper"  style="max-width:300px; border-radius:8px;">
+            </div>
+                
+           
+            
+            <nav class="navbar navbar-light bg-transparent  position-fixed  bottom-10 start-50 translate-middle-x" style="width:20%;">
+                <div class="container-fluid">
+                    <span class="navbar-brand mb-0 h1 text-truncate">{{entity.name}}</span>
+                    <div class="w-100"></div>
+                    <span class="badge bg-primary">{{ entity.breed}}</span>
+                    <div class="btn-group" role="group" aria-label="Basic example">
+                        <a href="{{ path('app_cat_detail', {'id': entity.id}) }}" class="btn btn-primary" ><i class="fas fa-search button_edit" ></i></a>
+                        <a href="{{ path('app_cat_like', {'id': entity.id }) }}" class="btn btn-primary">
+                     
+                    <i class="fas fa-thumbs-up"></i>
+                    
+                        {{ entity.likes|length }}
+                    
+                    </a>
+                    </div>
+                </div>
+            </nav>
+            
+           
+
+            
+
+    </div>
+    {% endif %}
+            
+{% endfor %}
+  </div>
+  <button class="carousel-control-prev" type="button" data-bs-target="#carouselExampleControls" data-bs-slide="prev">
+    <span class="carousel-control-prev-icon bg-primary" aria-hidden="true"></span>
+    <span class="visually-hidden">Previous</span>
+  </button>
+  <button class="carousel-control-next" type="button" data-bs-target="#carouselExampleControls" data-bs-slide="next">
+    <span class="carousel-control-next-icon bg-primary" aria-hidden="true"></span>
+    <span class="visually-hidden">Next</span>
+  </button>
+</div>
+{# ********************Affichage classement****************** #}
+<div id="classement">
+<nav class="navbar navbar-expand-lg navbar-light bg-primary sticky-top d-flex justify-content-center align-items-center"style="color:white">
+<h1 class="text-center">Classement</h1>
+</nav>
+    <ol class="list-group list-group-numbered">
+        {% for entity in classement %}
+            {% if entity[0].publish %}
+            <li class="list-group-item d-flex justify-content-between align-items-start">
+                <div class="ms-2 me-auto flex-wrap">
+                    <div class="d-inline-block fw-bold  text-break mw-75">{{ entity[0].name }}</div>
+                    <div class="w-100"></div>
+                    <span class="badge bg-primary">{{ entity[0].breed}}</span>
+                       
+                </div>
+                
+                <span class="badge bg-primary rounded-pill"> Like :{{ entity[0].likes|length }}</span>
+                
+                <a href="{{ path('app_cat_detail', {'id': entity[0].id}) }}" class="  btn "><i class="fas fa-search button_edit" ></i></a>
+            </li>
+            {% endif %}
+        {% endfor %}
+    </ol>
+    
+</div>
+
+{# ********************Affichage chat User************* #}
+<div id="list_cat_user">
+<nav class="navbar navbar-expand-lg navbar-light bg-primary sticky-top d-flex justify-content-center align-items-center"style="color:white">
+<h1 class="text-center">Mes Chats</h1>
+</nav>
+    <ul class="list-group">
+        {% for entity in entities %}
+        {% if entity.user == app.user %}
+            <li class="list-group-item d-flex justify-content-between align-items-start">
+                <div class="ms-2 me-auto">
+                    <div class="fw-bold text-break mw-75">{{ entity.name }}</div>
+                    <span class="badge bg-primary">{{ entity.breed}}</span>
+                        <ul class="nav nav-primary justify-content-around w-100">
+                            <li class="nav-item">
+                             <a href="{{ path('app_cat_detail', {'id': entity.id}) }}"><i class="fas fa-search button_edit" ></i></a>
+                            </li>
+                            
+                            {% if is_granted('EDIT', entity) %}
+                            
+                            <li class="nav-item">
+                                <a  href="{{ path('app_cat_edit', {'id': entity.id} )}}"><i class="fas fa-edit"></i></a>
+                            </li>
+                            <li class="nav-item">
+                                <a  href="{{ path('app_cat_delete', {'id': entity.id} )}}"><i class="fas fa-trash"></i></a>
+                            </li>
+                            {% endif %}
+                            
+                        </ul>
+                </div>
+                <span class="badge bg-primary rounded-pill"> Like :{{ entity.likes|length }}</span>
+            </li>
+        {%  endif %}
+        {% endfor %}
+    </ul>
+    
+</div>
+{% endif %}
+</section>
+
+
+
+{% endblock %}

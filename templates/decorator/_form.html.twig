@@ -1,0 +1,39 @@
+<div class="form_container">
+    <div class="form">
+   
+   
+        {{ form_start(form) }} 
+
+        
+            
+            {% block formBody %}
+            
+                {{ form_widget(form) }}
+            
+                 
+            {% endblock %}
+            
+
+            
+            <div class="form_footer">
+           
+                <button type="submit" class="button my-3">Enregistrer</button>
+           
+                
+                <br>
+                
+                
+
+                    <input class="btn btn-danger" type="button" value="Retour" onclick="history.go(-1)">
+                    
+              
+               
+            </div>
+               
+        
+
+
+        {{ form_end(form) }} 
+    </div>
+
+</div>

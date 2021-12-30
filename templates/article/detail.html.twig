@@ -1,0 +1,36 @@
+{% extends "front_layout.html.twig" %}
+
+{% block content %}
+    <div class="container vw-100 vh-100 d-flex align-items-center justify-content-center ">
+        <div class="row w-100 h-75 my-3 p-3 d-flex justify-content-between" style="background-color:white;">
+        <div class="col overflow-auto mh-100 px-3">
+        <div class="container d-flex justify-content-between">
+        <div class="btn-group" role="group" aria-label="Basic example">
+        <button class="btn btn-danger" type="button" value="Retour" onclick="history.go(-1)"><i class="fas fa-arrow-left"></i></button>
+             {% if is_granted('ROLE_ADMIN') %}
+                    <a href="{{ path('app_article_edit', {'id': entity.id}) }}" class="btn btn-primary"><i class="fas fa-edit"></i></a>
+                     <a href="{{ path('app_article_delete',{'id':entity.id}) }}" class="btn btn-primary"><i class="fas fa-trash"></i></a>
+            {% endif %}
+        </div>
+            <p>{{ entity.date_ToString() }}</p>
+        </div>
+            
+            
+                <figure>
+                    <blockquote class="blockquote">
+                        <h1>{{ entity.objet }}</h1>
+                    </blockquote>
+                    <figcaption class="blockquote-footer">
+                        par <cite title="Source Title">{{ entity.auteur.email }}</cite>
+                    </figcaption>
+                </figure>
+                <p class="text-break mt-3">
+                {% autoescape false %}
+                    {{ entity.contenu }}
+                {% endautoescape %}
+                </p>
+            </div>
+        </div>
+    </div>
+   
+{% endblock %}

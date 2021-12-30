@@ -1,0 +1,102 @@
+{% extends "front_layout.html.twig" %}
+
+{% block content %}
+    <div class="container vw-100 vh-100 d-flex align-items-center justify-content-center ">
+    
+    
+    
+  <div class="row w-100 d-flex justify-content-between">
+    <div class="col">
+        
+        <h1>{{ entity.name }}</h1>
+        <div class="c-subscribe-box">
+        
+            <div class="rainbow"><span></span><span></span></div>
+            <img src="{{ asset(entity.image.webPath) }}" alt="{{ entity.name }}"class="c-subscribe-box__wrapper"  style="max-width:300px; border-radius:8px;">
+        </div>
+        {% if not entity.publish %}
+            <div class="alert alert-danger mt-3" role="alert">
+                Ce chat est en attente de publication et n'apparaitra pas dans la liste des concurrent. <br>
+                Seul un administrateur peut rendre visible un chat. Si vous n'avez pas de nouvelle au bout d'une semaine, contactez un administrateur en 
+                <a  href="mailto:vaubourg.killian@gmail.com">cliquant sur ce lien.</a>
+            </div>
+        {% endif %}
+    </div>
+    <div class="col">
+    <h1>Informations</h1>
+      <ul class="list-group list-group-flush">
+        <li class="list-group-item">Date de naissance : {{ entity.date_ToString() }}</li>
+        <li class="list-group-item">Localisation : {{ entity.location }}</li>
+        <li class="list-group-item">Race : {{ entity.breed }}</li>
+        <li class="list-group-item">Nombre de likes: {{ entity.likes|length }}</li>
+        
+        {% if is_granted('EDIT', entity) %}
+            <li class="list-group-item">
+                <a href="{{ path('app_cat_edit', {'id': entity.id} )}}" class="btn btn-light"><i class="fas fa-edit"></i></a>
+                <a href="{{ path('app_cat_delete', {'id': entity.id} )}}" class="btn btn-danger"><i class="fas fa-trash"></i></a>
+            </li>
+        {% endif %}
+    </ul>
+    </div>
+    <div class="col">
+    <h1>{{ entity.user.email }}</h1>
+     <ul class="list-group list-group-flush">
+        <li class="list-group-item">
+        {% if entity.user.prenom and entity.user.nom is same as null %}
+            {{ entity.user.prenom }} {{ entity.user.nom }}
+        {% else %}
+            Anonyme
+        {% endif %}
+        </li>
+        <li class="list-group-item">Nombre de chat inscrit sur le site : {{ entity.user.cats|length }}</li>
+        <li class="list-group-item">
+            <ul class="list-group h-50" style="overflow:auto;">
+                {% for entity in entity.user.cats %}
+                    {% if entity.id == id %}
+                        <li class="list-group-item d-flex justify-content-between align-items-start active">
+                    {% else %}
+                        <li class="list-group-item d-flex justify-content-between align-items-start">
+                    {% endif %}
+                    
+                        <div class="ms-2 me-auto">
+                            <div class="fw-bold">{{ entity.name }}
+                             {% if entity.id != id %}
+                                        <a href="{{ path('app_cat_detail', {'id': entity.id}) }}"><i class="fas fa-search button_edit" ></i></a>
+                            {% endif %}
+                            </div>
+                            
+                            <span class="badge bg-primary">{{ entity.breed}}</span>
+                               
+
+                                <ul class="nav nav-primary justify-content-around w-100">
+                                    
+                                    {% if is_granted('EDIT', entity) %}
+                                    {% if entity.id != id %}
+                                    <li class="nav-item">
+                                        <a  href="{{ path('app_cat_edit', {'id': entity.id} )}}"><i class="fas fa-edit"></i></a>
+                                    </li>
+                                    <li class="nav-item">
+                                        <a  href="{{ path('app_cat_delete', {'id': entity.id} )}}"><i class="fas fa-trash"></i></a>
+                                    </li>
+                                    {% endif %}
+                                    {% endif %}
+                                    
+                                </ul>
+                        </div>
+                       
+                            <span class="badge bg-primary rounded-pill"> Like :{{ entity.likes|length }}</span>
+                            
+                        
+                        
+                    </li>
+                
+                {% endfor %}
+            </ul>
+        </li>
+    </ul>
+    </div>
+  </div>
+</div>
+
+   
+{% endblock %}
